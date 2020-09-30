@@ -14,7 +14,6 @@ namespace MS.CommonUtils{
         private HashSet<T> _cacheSet = new HashSet<T>();
 
         public ObjectPool(){
-
         }
 
         public bool isEmpty{
@@ -64,6 +63,11 @@ namespace MS.CommonUtils{
             get{
                 return _cache.Count;
             }
+        }
+
+        public override string ToString()
+        {
+            return $"{this.GetType().Name}<{typeof(T).Name}>";
         }
 
     } 
