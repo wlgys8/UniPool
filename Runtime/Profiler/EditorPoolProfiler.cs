@@ -8,6 +8,7 @@ namespace MS.CommonUtils.Profiler{
     {
 
         private static Dictionary<int,PoolStatics> _staticsMap = new Dictionary<int, PoolStatics>();
+        private static bool _dirty = false;
 
         private static PoolStatics GetStatics(object pool){
             var hash = pool.GetHashCode();
@@ -20,31 +21,41 @@ namespace MS.CommonUtils.Profiler{
         [Conditional("UNITY_EDITOR")]
         internal static void TrackAllocate(object pool){
             GetStatics(pool).totalAllocateCount ++;
+            _dirty = true;
         }
 
         [Conditional("UNITY_EDITOR")]
         internal static void TrackRequest(object pool){
             GetStatics(pool).freeCount --;
+             _dirty = true;
         }
 
         [Conditional("UNITY_EDITOR")]
         internal static void TrackRelease(object pool){
             GetStatics(pool).freeCount ++;
+             _dirty = true;
         }
 
-        public static List<PoolStatics> ListPoolStatics(){
-            GC.Collect();
-            List<PoolStatics> statics = new List<PoolStatics>();
-            var keys = _staticsMap.Keys.ToArray();
-            foreach(var key in keys){
-                var v = _staticsMap[key];
-                if(v.Target == null){
-                    _staticsMap.Remove(key);
-                    continue;
-                }
-                statics.Add(v);
+        public static bool isDirty{
+            get{
+                return _dirty;
             }
-            return statics;
+        }
+
+        [Conditional("UNITY_EDITOR")]
+        public static void CleanDirty(){
+            _dirty = false;
+        }
+
+        public static void ListPoolStatics(List<PoolStatics> outList, bool gcInvoke = false){
+            if(gcInvoke){
+                GC.Collect();
+            }
+            outList.Clear();
+            foreach(var kv in _staticsMap){
+                var v = kv.Value;
+                outList.Add(v);
+            }
         }
 
 
