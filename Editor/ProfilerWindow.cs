@@ -9,7 +9,9 @@ namespace MS.CommonUtils.Profiler.Editor{
         [MenuItem("Window/UniPool/Profiler")]
         public static void Open(){
 
-            EditorWindow.GetWindow<ProfilerWindow>().ShowPopup();
+            var win = EditorWindow.GetWindow<ProfilerWindow>();
+            win.titleContent = new GUIContent("PoolProfiler");
+            win.ShowPopup();
         }
         private List<EditorPoolProfiler.PoolStatics> _statics = new List<EditorPoolProfiler.PoolStatics>();
         void OnEnable(){
