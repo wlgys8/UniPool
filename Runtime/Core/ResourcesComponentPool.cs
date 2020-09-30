@@ -56,11 +56,19 @@ namespace MS.CommonUtils{
             return Object.Instantiate<GameObject>(prefab,position,rotation,parent).GetComponent<T>();
         }
 
-        public override T Request(){
+        private T Load(Transform parent){
+            if(!prefab){
+                return null;
+            }
+            EditorPoolProfiler.TrackAllocate(this);
+            return Object.Instantiate<GameObject>(prefab,parent).GetComponent<T>();
+        }
+
+        public override T Request(Transform parent){
             if(this.Count > 0){
-                return base.Request();
+                return base.Request(parent);
             }else{
-                return this.Load();
+                return this.Load(parent);
             }
         }
 

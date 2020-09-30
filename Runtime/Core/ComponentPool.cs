@@ -63,19 +63,17 @@ namespace MS.CommonUtils{
             Object.Destroy(item.gameObject);
         }
 
-
-        public T Request(Transform parent){
-            T ret = base.Request();
-            ret.transform.SetParent(parent,false);
-            return ret;
+        public virtual T Request(Transform parent){
+            var item = base.Request();
+            item.transform.SetParent(parent,false);
+            return item;
         }
 
         public override T Request(){
-            return Request(null);
+            return this.Request(null);
         }
 
         public override void Release(T item){
-            var p = poolNode;
             if(!item){
                 return;
             }
