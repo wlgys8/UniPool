@@ -24,6 +24,12 @@ namespace MS.CommonUtils{
             return _cache.Request();
         }
 
+        public static List<T> RequestAndFill(IEnumerable<T> source){
+            var list = Request();
+            list.AddRange(source);
+            return list;
+        }
+
         /// <summary>
         /// List will be cleared and put back into the pool
         /// 将一个List对象放回池中。List.Clear会被调用。
