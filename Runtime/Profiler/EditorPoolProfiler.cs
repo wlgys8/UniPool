@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+
+#if UNITY_EDITOR && UNIPOOL_TRACE
+#define __UNIPOOL_TRACE_ON__
+#endif
+
 namespace MS.CommonUtils.Profiler{
 
     public static class EditorPoolProfiler
@@ -18,19 +23,19 @@ namespace MS.CommonUtils.Profiler{
             return _staticsMap[hash];
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("__UNIPOOL_TRACE_ON__")]
         internal static void TrackAllocate(object pool){
             GetStatics(pool).totalAllocateCount ++;
             _dirty = true;
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("__UNIPOOL_TRACE_ON__")]
         internal static void TrackRequest(object pool){
             GetStatics(pool).freeCount --;
              _dirty = true;
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("__UNIPOOL_TRACE_ON__")]
         internal static void TrackRelease(object pool){
             GetStatics(pool).freeCount ++;
              _dirty = true;
@@ -42,7 +47,7 @@ namespace MS.CommonUtils.Profiler{
             }
         }
 
-        [Conditional("UNITY_EDITOR")]
+        [Conditional("__UNIPOOL_TRACE_ON__")]
         public static void CleanDirty(){
             _dirty = false;
         }
