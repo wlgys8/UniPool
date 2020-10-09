@@ -14,6 +14,13 @@ namespace MS.CommonUtils{
         private HashSet<T> _cacheSet = new HashSet<T>();
 
         public ObjectPool(){
+            _cache = new Stack<T>();
+            _cacheSet = new HashSet<T>();
+        }
+
+        public ObjectPool(int capacity){
+            _cache = new Stack<T>(capacity);
+            _cacheSet = new HashSet<T>();
         }
 
         public bool isEmpty{
