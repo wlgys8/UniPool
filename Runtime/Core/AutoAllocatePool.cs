@@ -7,6 +7,18 @@ namespace MS.CommonUtils{
     /// </summary>
     public class AutoAllocatePool<T> : ObjectPool<T> where T: new()
     {
+
+        /// <summary>
+        /// 在Pool中预先生成一定数量的对象
+        /// </summary>
+        public void PreAllocate(int count){
+            for(var i = 0; i < count; i ++){
+                EditorPoolProfiler.TrackAllocate(this);
+                Release(new T());
+            }
+        }
+
+        
         public override T Request()
         {
             if(this.isEmpty){
