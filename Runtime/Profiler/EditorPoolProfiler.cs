@@ -1,11 +1,11 @@
-﻿using System;
+﻿#if UNITY_EDITOR && UNIPOOL_TRACK
+#define __UNIPOOL_TRACK_ON__
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
-#if UNITY_EDITOR && UNIPOOL_TRACE
-#define __UNIPOOL_TRACE_ON__
-#endif
 
 namespace MS.CommonUtils.Profiler{
 
@@ -15,6 +15,12 @@ namespace MS.CommonUtils.Profiler{
         private static Dictionary<int,PoolStatics> _staticsMap = new Dictionary<int, PoolStatics>();
         private static bool _dirty = false;
 
+        #if __UNIPOOL_TRACK_ON__
+        public static readonly bool isTrackOn = true;
+        #else
+        public static readonly bool isTrackOn = false;
+        #endif
+
         private static PoolStatics GetStatics(object pool){
             var hash = pool.GetHashCode();
             if(!_staticsMap.ContainsKey(hash)){
@@ -23,19 +29,19 @@ namespace MS.CommonUtils.Profiler{
             return _staticsMap[hash];
         }
 
-        [Conditional("__UNIPOOL_TRACE_ON__")]
+        [Conditional("__UNIPOOL_TRACK_ON__")]
         internal static void TrackAllocate(object pool){
             GetStatics(pool).totalAllocateCount ++;
             _dirty = true;
         }
 
-        [Conditional("__UNIPOOL_TRACE_ON__")]
+        [Conditional("__UNIPOOL_TRACK_ON__")]
         internal static void TrackRequest(object pool){
             GetStatics(pool).freeCount --;
              _dirty = true;
         }
 
-        [Conditional("__UNIPOOL_TRACE_ON__")]
+        [Conditional("__UNIPOOL_TRACK_ON__")]
         internal static void TrackRelease(object pool){
             GetStatics(pool).freeCount ++;
              _dirty = true;
@@ -47,7 +53,7 @@ namespace MS.CommonUtils.Profiler{
             }
         }
 
-        [Conditional("__UNIPOOL_TRACE_ON__")]
+        [Conditional("__UNIPOOL_TRACK_ON__")]
         public static void CleanDirty(){
             _dirty = false;
         }

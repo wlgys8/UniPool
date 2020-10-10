@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Linq;
 
 namespace MS.CommonUtils.Profiler.Editor{
     internal class ProfilerWindow : EditorWindow
@@ -44,7 +45,31 @@ namespace MS.CommonUtils.Profiler.Editor{
             if(GUILayout.Button("GC")){
                 System.GC.Collect();
             }
+            var trackName = Profiler.EditorPoolProfiler.isTrackOn ? "Disable Track":"Enable Track";
+            EditorGUI.BeginDisabledGroup(EditorApplication.isCompiling);
+            if(GUILayout.Button(trackName)){
+                if(Profiler.EditorPoolProfiler.isTrackOn){
+                    DisableTrack();
+                }else{
+                    EnableTrack();
+                }
+            }
+            EditorGUI.EndDisabledGroup();
             EditorGUILayout.EndHorizontal();
+        }
+
+        private void EnableTrack(){
+            var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup,defineSymbols + ";" + "UNIPOOL_TRACK");
+        }
+
+        private void DisableTrack(){
+            var defineSymbols = PlayerSettings.GetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup);
+            var array = defineSymbols.Split(';').Where((value)=>{
+                return value != "UNIPOOL_TRACK";
+            });
+            defineSymbols = string.Join(";",array);
+            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup,defineSymbols);
         }
 
         private void DrawStaticsItem(Rect rect, EditorPoolProfiler.PoolStatics staticsItem){
