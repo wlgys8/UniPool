@@ -7,7 +7,18 @@ namespace MS.CommonUtils{
 
     using Profiler;
 
-    public class ObjectPool<T>{
+    public interface IObjectPool<T>{
+
+        T Request();
+
+        void Release(T item);
+
+        int Count{
+            get;
+        }
+    }
+
+    public class ObjectPool<T>:IObjectPool<T>{
 
 
         private Stack<T> _cache = new Stack<T>();
